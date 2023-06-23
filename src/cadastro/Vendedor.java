@@ -1,6 +1,8 @@
 package cadastro;
 
-public class Vendedor extends Usuario{
+import java.io.Serializable;
+
+public class Vendedor extends Usuario implements Serializable{
 	
 	private boolean aluno;
 	private String ra;

@@ -1,6 +1,8 @@
 package cadastro;
 
-public class Administrador extends Usuario{
+import java.io.Serializable;
+
+public class Administrador extends Usuario implements Serializable{
 	
 	private int admLvl;//ADM LVL 1: Tem permissão total no sistema - ADM LVL 2: Sem permissão de excluir vendedores e catalogos - ADM LVL 3: nivel 3: Permissão apenas para visualizar os dados dos usuários
 	private double salario;
