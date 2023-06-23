@@ -45,17 +45,212 @@ public class MainCadastro {
 									break;
 								case 2:
 									cadastroAdministrador();
-									break;
+									break;									
 							}
+							break;
+						case 2:
+							editarUsuario();
+							break;
 					}
 					
-				}catch(Exception e){/*System.err.println("\n\ne: " + e);*/}
+				}catch(Exception e){System.err.println("\n\ne: " + e);}
 				
 			}while(quitOption != true);
 			
 			System.out.print("\nFim!");
 			scan.close();	
 		
+	}
+	
+	static void writeList(List<Usuario> list) {
+		System.out.println("\n----------------------");
+		for(int i = 0; i < list.size(); i++) {
+			System.out.println(list.get(i));
+			System.out.println("----------------------");
+		}
+	}
+	
+	static List<Usuario> buscaUsuarios(char stLetter) {
+		
+		List<Usuario> searchList = new ArrayList<>();
+			
+		for (int i = 0; i < users.size(); i++) {
+			
+			String lowerCase1 = String.valueOf(users.get(i).getNome().charAt(0));
+			String stLetterLC = String.valueOf(stLetter);
+			
+			if(lowerCase1.equalsIgnoreCase(stLetterLC)) 
+				searchList.add(users.get(i));			
+		}
+		
+		//LOG
+		//writeList(searchList);
+		System.out.println("Resultado da busca: " + searchList.size() + " resultado(s).");
+
+		return searchList;		
+	}
+	
+	static void editarUsuario() {
+		
+		//RECEBE A ENTRADA DO USUARIO PARA PEGAR A PRIMEIRA LETRA DO NOME
+		char stLetter = ' ';
+		List<Usuario> listResult;
+		
+		do {
+			scan = new Scanner(System.in);
+			
+			try {
+				System.out.print("Primeira letra do nome: ");
+				stLetter = scan.next().charAt(0);
+				if(Character.isDigit(stLetter)) {
+					System.err.println("Não use números!");
+				}
+			}catch (Exception e) {System.err.println("erro: Digite apenas a primeira letra!");	}
+			//BUSCA POR USUÁRIO
+			listResult = buscaUsuarios(stLetter);	
+			if(listResult.isEmpty())
+				System.out.println("\nNenhum nome econtrado! Tente novamente!");
+		}while(Character.isDigit(stLetter) || listResult.isEmpty());
+		
+		//LOG
+		//System.out.println("stLetter: " + stLetter);
+		
+		
+		
+		//==============
+		
+		short idSearch = -1;
+		boolean kickLoop = false;
+		Usuario userSelected = null;
+		
+		//SELEÇÃO DE ID
+		do {
+			scan = new Scanner(System.in);
+			
+			writeList(listResult);
+			
+			try {
+				System.out.print("Digite o ID: ");
+				idSearch = scan.nextShort();
+				
+				if(idSearch > 0) {
+					for(int i = 0; i < listResult.size(); i++) {
+						
+						System.out.println("i: " + i);
+						System.out.println("listSize: " + listResult.size());
+						
+						if(listResult.get(i).getId() == idSearch) {
+							System.out.println("------------------------");
+							System.out.println("- Usuário selecionado");
+							System.out.println(users.get(i));
+							
+							System.out.println("------------------------");
+							System.out.print("Confirmar seleção [S/ N]: ");
+							kickLoop = scan.next().equalsIgnoreCase("s");
+							
+							i = users.size() - 1;//Quebra o laço
+							
+							if(kickLoop) {
+								userSelected = users.get(i);								
+							}
+						}else
+							if(i == listResult.size())
+								System.err.println("erro: ID não encontrado! Tente novamente!");
+					}
+											
+				}else
+					System.err.println("Número de ID deve ser maior que 0!");
+				
+			}catch (Exception e) {System.err.println(e);	}
+			
+		}while(idSearch < 0 || !kickLoop);
+		//FIM DA SELEÇÃO DO USUÁRIO
+		
+		//MENU PARA ALTERAÇÂO
+		String option = "";
+		System.out.println("----------------------");
+		if(userSelected instanceof Administrador) {
+			do {
+				try {
+					System.out.println("  ↓  Escolha uma opção\n" +
+									   " [1] - Alterar nome\n" +
+									   " [2] - Alterar usuário\n" + 
+									   " [3] - Alterar senha\n" +
+									   " [4] - Alterar email\n" +
+									   " [5] - Alterar cidade\n" + 
+									   " [6] - Alterar salário\n" +  
+									   " [0] - Sair\n");
+					System.out.print("→ ");
+				
+					option = scan.next();
+				}catch(Exception e) {System.out.println("Digite um número valido!\ne: " + e + "\n");};
+			
+				switch(Integer.parseInt(option)) {
+					case 0:
+						return;
+					case 1:
+						//ALTERAR NOME
+						System.out.println("- Alterar nome -");
+						System.out.println("Nome atual: " + userSelected.getNome());
+						System.out.print("- Novo nome: ");
+						for(int i = 0; i < users.size(); i++) {
+							if(users.get(i).getId() == userSelected.getId()) {
+								scan = new Scanner(System.in);
+								
+								String newName = scan.nextLine();								
+								users.get(i).setNome(newName);
+								
+								if(users.get(i).getNome() == newName) {
+									System.out.println("Nome alterado com sucesso!");
+									System.out.println("---------------");
+									System.out.println(users.get(i));
+								}
+								
+								i = users.size() - 1;
+							}							
+						}
+						System.out.println("\n");
+						break;
+					case 2:
+						//ALTERAR usuário
+						System.out.println("- Alterar usuário -");
+						System.out.println("Usuário atual: " + userSelected.getUsuario());
+						System.out.print("- Novo nome de usuário: ");
+						for(int i = 0; i < users.size(); i++) {
+							if(users.get(i).getId() == userSelected.getId()) {
+								scan = new Scanner(System.in);
+								
+								String newUsername = scan.nextLine();								
+								users.get(i).setUsuario(newUsername);
+								
+								if(users.get(i).getUsuario() == newUsername) {
+									System.out.println("Usuário alterado com sucesso!");
+									System.out.println("---------------");
+									System.out.println(users.get(i));
+								}
+								
+								i = users.size() - 1;
+							}							
+						}
+						System.out.println("\n");
+						break;
+					default:
+						System.out.println("Opção não encontrada! Tente novamente!");
+				}
+			}while(Integer.parseInt(option) < 0 || Integer.parseInt(option) > 6 || Integer.parseInt(option) != 0);
+			
+		}else {//SÓ É POSSIVEL POIS TEMOS APENAS DUAS SUBCLASSES!
+			System.out.println("  ↓  Escolha uma opção\n" +
+							   " [1] - Alterar nome\n" +
+							   " [2] - Alterar usuário\n" + 
+							   " [3] - Alterar senha\n" +
+							   " [4] - Alterar email\n" +
+							   " [5] - Alterar cidade\n" + 
+							   " [6] - Alterar condição de aluno\n" +  
+							   " [6] - Alterar Ra\n" +  
+							   " [0] - Sair\n");
+		}
+				
 	}
 	
 	
@@ -97,9 +292,12 @@ public class MainCadastro {
 			System.out.print("Nome: ");
 			adm.setNome( scan.nextLine() );
 			
-			System.out.print("Sálario: ");
-			((Administrador)adm).setSalario( scan.nextDouble() );
-			
+			do {
+				try {					
+					System.out.print("Sálario: ");
+					((Administrador)adm).setSalario( scan.nextDouble() );
+				}catch(Exception e) {scan = new Scanner(System.in); System.out.println("Digite um número valido!");}
+			}while(((Administrador)adm).getSalario() == 0);
 			boolean confirm = true;
 			
 			do {
@@ -114,7 +312,7 @@ public class MainCadastro {
 					System.out.print("Voltar [S/ N]: ");
 					confirm = scan.next().equalsIgnoreCase("s");
 				}
-				
+			
 			}while(usuarioTestCadastroUsuario(adm.getUsuario()) && !confirm);
 			
 			if(!usuarioTestCadastroUsuario(adm.getUsuario())) {
@@ -140,7 +338,7 @@ public class MainCadastro {
 				System.out.println("Resumo do cadastro\n-------------------\n");
 				System.out.println(adm);
 				System.out.println("\n-------------------\n");
-				System.out.println(" CONFIRMAR CADASTRO [S/ N]: ");
+				System.out.print(" CONFIRMAR CADASTRO [S/ N]: ");
 				//FIM LOG
 				
 				confirmCadastro = scan.next().equalsIgnoreCase("s");
@@ -221,7 +419,7 @@ public class MainCadastro {
 				System.out.println("Resumo do cadastro\n-------------------\n");
 				System.out.println(vendedor);
 				System.out.println("\n-------------------\n");
-				System.out.println(" CONFIRMAR CADASTRO [S/ N]: ");
+				System.out.print(" CONFIRMAR CADASTRO [S/ N]: ");
 				//FIM LOG
 				
 				confirmCadastro = scan.next().equalsIgnoreCase("s");
