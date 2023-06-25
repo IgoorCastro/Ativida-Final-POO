@@ -742,7 +742,7 @@ public class MainCadastro {
 						if (listResult.get(i).getId() == idSearch) {
 							System.out.println("\n------------------------");
 							System.out.println("- Usuário selecionado");
-							System.out.println(users.get(i));
+							System.out.println(listResult.get(i));
 
 							System.out.println("------------------------");
 							System.out.print("Confirmar seleção [S/ N]: ");
@@ -750,7 +750,7 @@ public class MainCadastro {
 							System.out.println();
 							if (kickLoop) {
 								//userSelected = users.get(i);
-								userSelected = users.get(i);
+								userSelected = listResult.get(i);
 							}
 							
 							i = users.size() - 1;// Quebra o laço
